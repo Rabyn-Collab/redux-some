@@ -1,34 +1,57 @@
 import { nanoid } from '@reduxjs/toolkit';
 import { useFormik } from 'formik'
 import React from 'react'
-import { useDispatch } from 'react-redux';
-import { postAdd } from '../features/postSlice';
+import { useDispatch, useSelector } from 'react-redux';
+import { postAdd, postEdit, toggleModal } from '../features/postSlice';
 
 
 const CrudForm = () => {
   const dispatch = useDispatch();
+
+  const { post, isEdit } = useSelector((store) => store.post);
+
   const formik = useFormik({
     initialValues: {
-      title: '',
-      detail: '',
-
+      title: post.title,
+      detail: post.detail,
     },
+
     onSubmit: (val, { resetForm }) => {
+
       const newPost = {
         title: val.title,
         detail: val.detail,
         id: nanoid()
       };
-      dispatch(postAdd(newPost));
-      resetForm();
+      if (isEdit) {
+        dispatch(postEdit({
+          newPost: {
+            title: val.title,
+            detail: val.detail,
+            id: post.id
+          }
+        }));
+        resetForm();
+        dispatch(toggleModal());
+      } else {
+        dispatch(postAdd(newPost));
+        resetForm();
+        dispatch(toggleModal());
+      }
+
     },
 
   });
 
   return (
     <div>
-      <div className=" max-w-lg  mt-10">
-        <form onSubmit={formik.handleSubmit} className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
+      <div className="w-[500px]   mt-10 bg-white shadow-md rounded">
+        <div className='flex justify-end px-2'>
+          <button onClick={() => dispatch(toggleModal())}><i className="fa-solid fa-xmark fa-lg"></i></button>
+        </div>
+
+        <form onSubmit={formik.handleSubmit} className="px-8 pt-6 pb-8 mb-4">
+
           <div className="mb-4">
             <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="title">
               Title
@@ -48,9 +71,11 @@ const CrudForm = () => {
           </div>
 
 
-          <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded w-[50%] " type="submit">
+          <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded  w-full " type="submit">
             Submit
           </button>
+
+
         </form>
 
       </div>
