@@ -12,7 +12,7 @@ const initialState = {
     detail: ''
   },
   isEdit: null,
-  modalShow: false
+  showModal: false
 };
 
 
@@ -31,12 +31,14 @@ const postSlice = createSlice({
     postEdit: (state, action) => {
       const { newPost } = action.payload;
       state.posts = state.posts.map((post) => {
-        return post.id === newPost.id ? newPost : post;
+        return post.id === newPost.id ? newPost : post
       });
       postAddtoStorage(state.posts);
     },
     changePost: (state, action) => {
+
       state.post = action.payload;
+
     },
     resetPost: (state, action) => {
       state.post = {
@@ -44,15 +46,16 @@ const postSlice = createSlice({
         detail: ''
       };
     },
-    toggleModal: (state, action) => {
-      state.modalShow = !state.modalShow;
-    },
-    toggleUpdate: (state, action) => {
+    isEdit: (state, action) => {
       state.isEdit = action.payload;
+    },
+    modalShow: (state, action) => {
+      state.showModal = !state.showModal;
     }
+
   }
 });
 
-export const { postAdd, postRemove, changePost, resetPost, toggleModal, toggleUpdate, postEdit } = postSlice.actions;
+export const { postAdd, postRemove, modalShow, isEdit, resetPost, changePost, postEdit } = postSlice.actions;
 
 export default postSlice.reducer;

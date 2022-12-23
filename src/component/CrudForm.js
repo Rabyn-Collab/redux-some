@@ -2,7 +2,7 @@ import { nanoid } from '@reduxjs/toolkit';
 import { useFormik } from 'formik'
 import React from 'react'
 import { useDispatch, useSelector } from 'react-redux';
-import { postAdd, postEdit, toggleModal } from '../features/postSlice';
+import { modalShow, postAdd, postEdit } from '../features/postSlice';
 
 
 const CrudForm = () => {
@@ -17,27 +17,25 @@ const CrudForm = () => {
     },
 
     onSubmit: (val, { resetForm }) => {
-
-      const newPost = {
-        title: val.title,
-        detail: val.detail,
-        id: nanoid()
-      };
       if (isEdit) {
         dispatch(postEdit({
           newPost: {
+            id: post.id,
             title: val.title,
-            detail: val.detail,
-            id: post.id
+            detail: val.detail
           }
         }));
-        resetForm();
-        dispatch(toggleModal());
+        dispatch(modalShow());
       } else {
-        dispatch(postAdd(newPost));
-        resetForm();
-        dispatch(toggleModal());
+        dispatch(postAdd({
+          title: val.title,
+          detail: val.detail,
+          id: nanoid()
+        }));
+        //  resetForm();
+        dispatch(modalShow());
       }
+
 
     },
 
@@ -46,10 +44,10 @@ const CrudForm = () => {
   return (
     <div>
       <div className="w-[500px]   mt-10 bg-white shadow-md rounded">
-        <div className='flex justify-end px-2'>
-          <button onClick={() => dispatch(toggleModal())}><i className="fa-solid fa-xmark fa-lg"></i></button>
-        </div>
 
+        <div className='flex justify-end px-2 py-1'>
+          <button onClick={() => dispatch(modalShow())}><i className="fa-solid fa-xmark fa-lg"></i></button>
+        </div>
         <form onSubmit={formik.handleSubmit} className="px-8 pt-6 pb-8 mb-4">
 
           <div className="mb-4">
