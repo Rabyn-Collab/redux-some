@@ -1,8 +1,12 @@
 import React from 'react'
 import { useNavigate } from 'react-router'
+import { useGetMoviesCategoryQuery } from '../features/movieSlice';
 
 const Home = () => {
   const nav = useNavigate();
+
+  const { data, isError, isLoading } = useGetMoviesCategoryQuery('/movie/top_rated');
+  console.log(data && data['results']);
   return (
     <div>
 
