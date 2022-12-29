@@ -9,8 +9,8 @@ const Header = () => {
       </div>
 
       <nav className='space-x-5 flex'>
-        <NavLink className="text-lg font-semibold">UpComing</NavLink>
-        <NavLink className="text-lg font-semibold">TopRated</NavLink>
+        <NavLink to='/movie/upcoming' className="text-lg font-semibold">UpComing</NavLink>
+        <NavLink to='/movie/top_rated' className="text-lg font-semibold">TopRated</NavLink>
 
         <form className='w-[200px]'>
           <label htmlFor="search" className="mb-2 text-sm font-medium text-gray-900 sr-only ">Search</label>

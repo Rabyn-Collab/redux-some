@@ -9,7 +9,7 @@ export const movieSlice = createApi({
   endpoints: (builder) => ({
     getMoviesCategory: builder.query({
       query: (query) => ({
-        url: query,
+        url: `/movie/${query}`,
         params: {
           api_key: '2a0f926961d00c667e191a21c14461f8'
         }
