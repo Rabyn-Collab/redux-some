@@ -1,12 +1,12 @@
 import React, { useEffect } from 'react'
-import { useParams } from 'react-router';
+import { useNavigate, useParams } from 'react-router';
 import { useGetMoviesCategoryQuery } from '../features/movieSlice'
 
 const Main = () => {
   const { category } = useParams();
 
   const { isLoading, data, isError, error } = useGetMoviesCategoryQuery(category ?? 'popular');
-
+  const nav = useNavigate();
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [category]);
@@ -18,12 +18,12 @@ const Main = () => {
   }
 
 
-
-
   return (
     <div className='p-5 grid grid-cols-4 gap-4 lg:grid-cols-3 md:grid-cols-2 sm:grid-cols-1'>
       {data && data.results.map((movie) => {
-        return <div key={movie.id} className='shadow-lg hover:scale-105 ease-in duration-300 cursor-pointer '>
+        return <div onClick={() => {
+          nav('/movie/detail', { state: { movieId: movie.id } })
+        }} key={movie.id} className='shadow-lg hover:scale-105 ease-in duration-300 cursor-pointer '>
           <img className='w-full h-[400px] object-cover' src={`https://image.tmdb.org/t/p/w600_and_h900_bestv2${movie.poster_path}`} alt="" />
           <div className='p-4'>
             <h1 className='text-xl font-semibold'>{movie.title}</h1>
