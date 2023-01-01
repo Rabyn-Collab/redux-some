@@ -1,9 +1,11 @@
 import { useFormik } from 'formik'
 import React from 'react'
 import { NavLink, useNavigate } from 'react-router-dom'
+import { useSelector } from 'react-redux';
 
 const Header = () => {
   const nav = useNavigate();
+  const { show } = useSelector((store) => store.show);
 
   const formik = useFormik({
     initialValues: {
@@ -17,7 +19,7 @@ const Header = () => {
 
 
   return (
-    <div className='bg-[#032541] text-white px-10 py-3 flex items-baseline justify-between w-full'>
+    <div className={show ? 'opacity-0  h-0 w-0' : 'bg-[#032541] sticky top-0 text-white px-10 py-3 flex items-baseline justify-between w-full transition-opacity duration-300  ease-in '} >
       <div className="title">
         <NavLink to='/' className="text-2xl font-bold">TMDB</NavLink>
       </div>

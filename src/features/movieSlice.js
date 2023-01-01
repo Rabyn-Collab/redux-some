@@ -13,7 +13,7 @@ export const showSlice = createSlice({
   initialState,
   reducers: {
     changeShow: (state, action) => {
-      state.show = !state.show;
+      state.show = action.payload;
     }
   }
 });
@@ -25,6 +25,7 @@ export const movieSlice = createApi({
   baseQuery: fetchBaseQuery({ baseUrl: 'https://api.themoviedb.org/3' }),
   tagTypes: ['movie'],
   endpoints: (builder) => ({
+
     getMoviesCategory: builder.query({
       query: (query) => ({
         url: `/movie/${query}`,
@@ -61,6 +62,9 @@ export const movieSlice = createApi({
 
 export const { useGetMoviesCategoryQuery, useGetSearchMoviesQuery, useGetMovieIdQuery } = movieSlice;
 
+
+export const { changeShow } = showSlice.actions;
+export default showSlice;
 
 
 
