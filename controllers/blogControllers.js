@@ -1,4 +1,48 @@
 const { v4: uuidv4 } = require('uuid');
+const Blog = require('../models/Blog');
+
+
+
+
+
+module.exports.addBlog = async (req, res) => {
+  const { title, detail } = req.body;
+
+  try {
+    const newBlog = new Blog({
+      title,
+      detail
+    });
+
+    await newBlog.save();
+
+    return res.status(201).json(newBlog);
+  } catch (err) {
+    console.log(err);
+  }
+
+
+
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 const posts = [
   {
@@ -20,25 +64,25 @@ const posts = [
 ];
 
 
-module.exports.getAllBlogs = (req, res) => {
-  return res.status(200).json(posts);
-}
+// module.exports.getAllBlogs = (req, res) => {
+//   return res.status(200).json(posts);
+// }
 
 
-module.exports.getSingleBlog = (req, res) => {
-  const id = req.params.id;
-  const post = posts.find((p) => p.id === Number(id));
-  return res.status(200).json(post);
-}
+// module.exports.getSingleBlog = (req, res) => {
+//   const id = req.params.id;
+//   const post = posts.find((p) => p.id === Number(id));
+//   return res.status(200).json(post);
+// }
 
 
-module.exports.addBlog = (req, res) => {
-  const { title, body } = req.body;
-  const newBlog = {
-    title,
-    body,
-    id: uuidv4()
-  };
-  posts.push(newBlog);
-  return res.status(200).json(newBlog);
-}
+// module.exports.addBlog = (req, res) => {
+//   const { title, body } = req.body;
+//   const newBlog = {
+//     title,
+//     body,
+//     id: uuidv4()
+//   };
+//   posts.push(newBlog);
+//   return res.status(200).json(newBlog);
+// }
