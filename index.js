@@ -4,8 +4,7 @@ const app = express();
 const cors = require('cors');
 const mongoose = require('mongoose');
 const blogRoutes = require('./routes/blogRoutes');
-const fileUpload = require("express-fileupload");
-const path = require("path");
+const fileUpload = require('express-fileupload');
 
 mongoose.set("strictQuery", false);
 
@@ -17,17 +16,18 @@ mongoose.connect(
 
 
 
-app.use('/uploads', express.static(path.join('uploads')));
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(morgan('dev'));
 app.use(cors());
 app.use(fileUpload({
   limits: {
-    fileSize: 1024 * 1024 // 1 MB
+    fileSize: 1024 * 1024
   },
   abortOnLimit: true
 }));
+
 
 
 

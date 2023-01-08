@@ -1,55 +1,34 @@
 const { v4: uuidv4 } = require('uuid');
 const Blog = require('../models/Blog');
 const path = require('path');
-const fs = require('fs');
-const cloudinary = require('cloudinary').v2
-
 
 
 module.exports.addBlog = async (req, res) => {
   const { title, detail } = req.body;
   if (!req.files) {
-    return res.status(400).json({ status: "No files were uploaded." });
+    return res.status(400).json('please send image');
   }
 
   const file = req.files.image;
-  const extensionName = path.extname(file.name);
-  const allowedExtension = ['.png', '.jpg', '.jpeg'];
 
-  if (!allowedExtension.includes(extensionName)) {
-    return res.status(422).send("Invalid Image");
+  const extensionName = path.extname(file.name);
+  const filesList = ['.png', '.jpg', '.jpeg'];
+
+  if (!filesList.includes(extensionName)) {
+    res.status(422).json({ status: 'invalid image' });
   }
 
-
-  // if (fs.existsSync(`./uploads/${file.name}`)) {
-  //   return res.status(422).send("Invalid Image");
-  // }
-
-  file.mv('./uploads/' + file.name, (err) => {
-
-  })
-
-
   try {
+    // const newBlog = new Blog({
+    //   title,
+    //   detail,
 
-    cloudinary.config({
-      cloud_name: process.env.CLOUD_NAME,
-      api_key: process.env.API_KEY,
-      api_secret: process.env.API_SECRET
-    });
+    // });
 
-    const result = await cloudinary.uploader.upload(req.file.path, { upload_preset: "sample_pics" });
+    // await newBlog.save();
 
 
-    const newBlog = new Blog({
-      title,
-      detail,
-
-    });
-
-    await newBlog.save();
-
-    return res.status(201).json({ h: 'hello' });
+    return res.status(201).json('success');
   } catch (err) {
     res.status(500).json(err);
   }
