@@ -2,6 +2,7 @@ const { v4: uuidv4 } = require('uuid');
 const Blog = require('../models/Blog');
 const path = require('path');
 const fs = require('fs');
+const cloudinary = require('cloudinary').v2
 
 
 
@@ -30,13 +31,24 @@ module.exports.addBlog = async (req, res) => {
 
 
   try {
-    // const newBlog = new Blog({
-    //   title,
-    //   detail
-    // });
 
-    // await newBlog.save();
-    //console.log(req.body);
+    cloudinary.config({
+      cloud_name: process.env.CLOUD_NAME,
+      api_key: process.env.API_KEY,
+      api_secret: process.env.API_SECRET
+    });
+
+    const result = await cloudinary.uploader.upload(req.file.path, { upload_preset: "sample_pics" });
+
+
+    const newBlog = new Blog({
+      title,
+      detail,
+
+    });
+
+    await newBlog.save();
+
     return res.status(201).json({ h: 'hello' });
   } catch (err) {
     res.status(500).json(err);
