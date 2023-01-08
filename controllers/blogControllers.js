@@ -1,24 +1,45 @@
 const { v4: uuidv4 } = require('uuid');
 const Blog = require('../models/Blog');
-
-
+const path = require('path');
+const fs = require('fs');
 
 
 
 module.exports.addBlog = async (req, res) => {
   const { title, detail } = req.body;
+  if (!req.files) {
+    return res.status(400).json({ status: "No files were uploaded." });
+  }
+
+  const file = req.files.image;
+  const extensionName = path.extname(file.name);
+  const allowedExtension = ['.png', '.jpg', '.jpeg'];
+
+  if (!allowedExtension.includes(extensionName)) {
+    return res.status(422).send("Invalid Image");
+  }
+
+
+  // if (fs.existsSync(`./uploads/${file.name}`)) {
+  //   return res.status(422).send("Invalid Image");
+  // }
+
+  file.mv('./uploads/' + file.name, (err) => {
+
+  })
+
 
   try {
-    const newBlog = new Blog({
-      title,
-      detail
-    });
+    // const newBlog = new Blog({
+    //   title,
+    //   detail
+    // });
 
-    await newBlog.save();
-
-    return res.status(201).json(newBlog);
+    // await newBlog.save();
+    //console.log(req.body);
+    return res.status(201).json({ h: 'hello' });
   } catch (err) {
-    console.log(err);
+    res.status(500).json(err);
   }
 
 
