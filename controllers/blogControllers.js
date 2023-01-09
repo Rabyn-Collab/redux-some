@@ -1,6 +1,19 @@
 const { v4: uuidv4 } = require('uuid');
 const Blog = require('../models/Blog');
 const path = require('path');
+const cloudinary = require('cloudinary').v2;
+
+
+module.exports.getAllBlogs = async (req, res) => {
+  try {
+    // const response = await Blog.find().sort({ createdAt: -1 });
+    const response = await Blog.find({ title: { $gt: 100 } });
+    // const response = await Blog.findOne({ _id: '63bb9e5a5d76def120cd3214' });
+    return res.status(200).json(response);
+  } catch (err) {
+    return res.status(500).json(err);
+  }
+}
 
 
 module.exports.addBlog = async (req, res) => {
@@ -18,17 +31,30 @@ module.exports.addBlog = async (req, res) => {
     res.status(422).json({ status: 'invalid image' });
   }
 
+  file.mv(`./uploads/${file.name}`, (err) => {
+
+  })
+
+  cloudinary.config({
+    cloud_name: 'dx5eyrlaf',
+    api_key: '316226597746222',
+    api_secret: 'YbnHayJ00pMZjzCnVFrois70iKc'
+  });
+
+  const result = await cloudinary.uploader.upload(`./uploads/${file.name}`, { upload_preset: 'sample_pics' });
+
   try {
-    // const newBlog = new Blog({
-    //   title,
-    //   detail,
+    const newBlog = new Blog({
+      title,
+      detail,
+      imageUrl: result.secure_url,
+      public_id: result.public_id
 
-    // });
+    });
 
-    // await newBlog.save();
+    await newBlog.save();
 
-
-    return res.status(201).json('success');
+    return res.status(201).json(newBlog);
   } catch (err) {
     res.status(500).json(err);
   }
@@ -40,7 +66,40 @@ module.exports.addBlog = async (req, res) => {
 
 
 
+module.exports.updateBlog = async (req, res) => {
+  try {
+    const id = req.params.id;
+    const response = await Blog.findByIdAndDelete({ _id: id });
+    return res.status(200).json('successfully removed');
+  } catch (err) {
+    return res.status(500).json(err);
+  }
+}
 
+
+
+
+module.exports.removeBlog = async (req, res) => {
+  try {
+    const id = req.params.id;
+    const { imageId } = req.body;
+    if (imageId) {
+      cloudinary.config({
+        cloud_name: 'dx5eyrlaf',
+        api_key: '316226597746222',
+        api_secret: 'YbnHayJ00pMZjzCnVFrois70iKc'
+      });
+      await cloudinary.uploader.destroy(imageId);
+      await Blog.findByIdAndDelete({ _id: id });
+      return res.status(200).json('successfully removed');
+    } else {
+      return res.status(401).json('imageId is required');
+    }
+
+  } catch (err) {
+    return res.status(500).json(err);
+  }
+}
 
 
 

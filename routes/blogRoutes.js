@@ -10,7 +10,9 @@ const postSchema = Joi.object({
   detail: Joi.string().required().min(10)
 });
 
-// router.get('/', blogController.getAllBlogs);
+router.get('/', blogController.getAllBlogs);
+router.delete('/api/remove/:id', blogController.removeBlog);
+
 // router.get('/api/:id', blogController.getSingleBlog);
 router.post('/', validator.body(postSchema), blogController.addBlog);
 

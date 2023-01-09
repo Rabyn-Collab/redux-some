@@ -22,7 +22,7 @@ const blogSchema = mongoose.Schema({
     required: true
   }
 
-});
+}, { timestamps: true });
 
 const Blog = mongoose.model('Blog', blogSchema);
 

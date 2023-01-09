@@ -5,7 +5,7 @@ const cors = require('cors');
 const mongoose = require('mongoose');
 const blogRoutes = require('./routes/blogRoutes');
 const fileUpload = require('express-fileupload');
-
+const path = require('path');
 mongoose.set("strictQuery", false);
 
 mongoose.connect(
@@ -19,6 +19,7 @@ mongoose.connect(
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use('/uploads', express.static(path.join('uploads')))
 app.use(morgan('dev'));
 app.use(cors());
 app.use(fileUpload({
