@@ -31,7 +31,7 @@ module.exports.addBlog = async (req, res) => {
     res.status(422).json({ status: 'invalid image' });
   }
 
-  file.mv(`./uploads/${file.name}`, (err) => {
+  file.mv(`./tmp/${file.name}`, (err) => {
 
   })
 
@@ -41,7 +41,7 @@ module.exports.addBlog = async (req, res) => {
     api_secret: 'YbnHayJ00pMZjzCnVFrois70iKc'
   });
 
-  const result = await cloudinary.uploader.upload(`./uploads/${file.name}`, { upload_preset: 'sample_pics' });
+  const result = await cloudinary.uploader.upload(`./tmp/${file.name}`, { upload_preset: 'sample_pics' });
   // fs.unlink(`./uploads/${file.name}`, (err) => {
 
   // })
@@ -79,24 +79,26 @@ module.exports.updateBlog = async (req, res) => {
         api_secret: 'YbnHayJ00pMZjzCnVFrois70iKc'
       });
 
-      await cloudinary.uploader.destroy(imageId);
+      // await cloudinary.uploader.destroy(imageId);
 
       const file = req.files.image;
-      if (fs.existsSync(`./uploads/${file.name}`)) {
-        return res.status(400).json('image already exist');
-      }
 
-      file.mv(`./uploads/${file.name}`, (err) => {
+      await file.mv(`./tmp/${file.name}`, (err) => {
 
-      });
+      })
+      // if (fs.existsSync(`./uploads/${file.name}`)) {
+      //   return res.status(400).json('image already exist');
+      // }
 
-      const result = await cloudinary.uploader.upload(`./uploads/${file.name}`, { upload_preset: 'sample_pics' });
-      const response = await Blog.findByIdAndUpdate({ _id: id }, {
-        title,
-        detail,
-        imageUrl: result.secure_url,
-        public_id: result.public_id,
-      });
+
+
+      const result = await cloudinary.uploader.upload(`./tmp/${file.name}`, { upload_preset: 'sample_pics' });
+      // const response = await Blog.findByIdAndUpdate({ _id: id }, {
+      //   title,
+      //   detail,
+      //   imageUrl: result.secure_url,
+      //   public_id: result.public_id,
+      // });
       return res.status(200).json('successfully updated');
 
 
@@ -110,6 +112,7 @@ module.exports.updateBlog = async (req, res) => {
 
 
   } catch (err) {
+    console.log(err);
     return res.status(500).json(err);
   }
 }

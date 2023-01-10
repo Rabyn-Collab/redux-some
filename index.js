@@ -19,14 +19,17 @@ mongoose.connect(
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use('/uploads', express.static(path.join('uploads')))
+app.use('/tmp', express.static(path.join('tmp')))
 app.use(morgan('dev'));
 app.use(cors());
 app.use(fileUpload({
   limits: {
     fileSize: 1024 * 1024
   },
-  abortOnLimit: true
+  abortOnLimit: true,
+  tempFileDir: path.join(__dirname, '/tmp/'),
+  useTempFiles: true,
+  createParentPath: true
 }));
 
 
