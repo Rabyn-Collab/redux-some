@@ -12,8 +12,7 @@ const postSchema = Joi.object({
 
 router.get('/', blogController.getAllBlogs);
 router.delete('/api/remove/:id', blogController.removeBlog);
-
-// router.get('/api/:id', blogController.getSingleBlog);
+router.patch('/api/update/:id', blogController.updateBlog);
 router.post('/', validator.body(postSchema), blogController.addBlog);
 
 module.exports = router;

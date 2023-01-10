@@ -2,12 +2,12 @@ const { v4: uuidv4 } = require('uuid');
 const Blog = require('../models/Blog');
 const path = require('path');
 const cloudinary = require('cloudinary').v2;
-
+const fs = require('fs');
 
 module.exports.getAllBlogs = async (req, res) => {
   try {
     // const response = await Blog.find().sort({ createdAt: -1 });
-    const response = await Blog.find({ title: { $gt: 100 } });
+    const response = await Blog.find();
     // const response = await Blog.findOne({ _id: '63bb9e5a5d76def120cd3214' });
     return res.status(200).json(response);
   } catch (err) {
@@ -42,13 +42,15 @@ module.exports.addBlog = async (req, res) => {
   });
 
   const result = await cloudinary.uploader.upload(`./uploads/${file.name}`, { upload_preset: 'sample_pics' });
+  // fs.unlink(`./uploads/${file.name}`, (err) => {
 
+  // })
   try {
     const newBlog = new Blog({
       title,
       detail,
       imageUrl: result.secure_url,
-      public_id: result.public_id
+      public_id: result.public_id,
 
     });
 
@@ -69,8 +71,44 @@ module.exports.addBlog = async (req, res) => {
 module.exports.updateBlog = async (req, res) => {
   try {
     const id = req.params.id;
-    const response = await Blog.findByIdAndDelete({ _id: id });
-    return res.status(200).json('successfully removed');
+    const { title, detail, imageId } = req.body;
+    if (imageId) {
+      cloudinary.config({
+        cloud_name: 'dx5eyrlaf',
+        api_key: '316226597746222',
+        api_secret: 'YbnHayJ00pMZjzCnVFrois70iKc'
+      });
+
+      await cloudinary.uploader.destroy(imageId);
+
+      const file = req.files.image;
+      if (fs.existsSync(`./uploads/${file.name}`)) {
+        return res.status(400).json('image already exist');
+      }
+
+      file.mv(`./uploads/${file.name}`, (err) => {
+
+      });
+
+      const result = await cloudinary.uploader.upload(`./uploads/${file.name}`, { upload_preset: 'sample_pics' });
+      const response = await Blog.findByIdAndUpdate({ _id: id }, {
+        title,
+        detail,
+        imageUrl: result.secure_url,
+        public_id: result.public_id,
+      });
+      return res.status(200).json('successfully updated');
+
+
+    } else {
+      const response = await Blog.findByIdAndUpdate({ _id: id }, {
+        title,
+        detail,
+      });
+      return res.status(200).json('successfully updated');
+    }
+
+
   } catch (err) {
     return res.status(500).json(err);
   }
