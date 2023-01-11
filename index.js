@@ -4,6 +4,7 @@ const app = express();
 const cors = require('cors');
 const mongoose = require('mongoose');
 const blogRoutes = require('./routes/blogRoutes');
+const userRoutes = require('./routes/userRoutes');
 const fileUpload = require('express-fileupload');
 const path = require('path');
 mongoose.set("strictQuery", false);
@@ -38,4 +39,5 @@ app.use(fileUpload({
 
 
 app.use(blogRoutes);
+app.use(userRoutes);
 
