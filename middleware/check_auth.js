@@ -15,6 +15,7 @@ module.exports.checkauth = async (req, res, next) => {
     if (!decoded) {
       return res.status(401).json({ status: 'you are not authorised' });
     }
+    req.userId = decoded._id;
     next();
   } catch (err) {
     return res.status(401).json('not authorised');

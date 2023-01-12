@@ -5,9 +5,10 @@ const cloudinary = require('cloudinary').v2;
 const fs = require('fs');
 
 module.exports.getAllBlogs = async (req, res) => {
+  const userId = req.userId;
   try {
-    // const response = await Blog.find().sort({ createdAt: -1 });
-    const response = await Blog.find();
+    const response = await Blog.find().sort({ createdAt: -1 });
+    // const response = await User.findOne({ _id: userId }, { 'blogs': 1 }).populate('blogs');
     // const response = await Blog.findOne({ _id: '63bb9e5a5d76def120cd3214' });
     return res.status(200).json(response);
   } catch (err) {
@@ -17,7 +18,9 @@ module.exports.getAllBlogs = async (req, res) => {
 
 
 module.exports.addBlog = async (req, res) => {
-  const { title, detail, userId } = req.body;
+  const { title, detail, } = req.body;
+  const userId = req.userId;
+
   if (!req.files) {
     return res.status(400).json('please send image');
   }
@@ -125,7 +128,8 @@ module.exports.updateBlog = async (req, res) => {
 module.exports.removeBlog = async (req, res) => {
   try {
     const id = req.params.id;
-    const { imageId, userId } = req.body;
+    const { imageId } = req.body;
+    const userId = req.userId;
     if (imageId) {
       cloudinary.config({
         cloud_name: 'dx5eyrlaf',
@@ -133,13 +137,10 @@ module.exports.removeBlog = async (req, res) => {
         api_secret: 'YbnHayJ00pMZjzCnVFrois70iKc'
       });
       await cloudinary.uploader.destroy(imageId);
-      // const blog = await Blog.findOne({ _id: id });
-
-      // await User.updateOne({ _id: userId }, {
-      //   $pullAll: {
-      //     blogs: id,
-      //   },
-      // });
+      const blog = await Blog.findOne({ _id: id });
+      const user = await User.findOne({ _id: userId });
+      user.blogs.pull(blog);
+      await user.save();
       await Blog.findByIdAndDelete({ _id: id });
       return res.status(200).json('successfully removed');
     } else {
