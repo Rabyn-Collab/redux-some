@@ -21,11 +21,10 @@ const blogSchema = mongoose.Schema({
     type: String,
     required: true
   },
-  author: [
-    {
-      type: mongoose.Types.ObjectId, ref: 'User'
-    }
-  ]
+  author: {
+    type: mongoose.Types.ObjectId, ref: 'User'
+  }
+
 
 
 }, { timestamps: true });

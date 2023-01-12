@@ -13,17 +13,17 @@ module.exports.userLogin = async (req, res) => {
       const isValidPassword = await bcrypt.compareSync(password, existUser.password);
       if (isValidPassword) {
         const token = jwt.sign({ _id: existUser._id }, 'tokenGenerate');
-        return res.status(201).json({
+        return res.status(200).json({
           username: existUser.username,
           email,
           token,
-          id: newUser._id
+          id: existUser._id
         });
       } else {
-        res.status(422).json({ message: 'invalid credentail' });
+        res.status(422).json({ message: 'invalid credential' });
       }
     } else {
-      res.status(401).json({ message: 'check your credentail' });
+      res.status(401).json({ message: 'check your credential' });
     }
 
   } catch (err) {
@@ -36,10 +36,12 @@ module.exports.userLogin = async (req, res) => {
 module.exports.userSignUp = async (req, res) => {
   const { email, password, username } = req.body;
   try {
-    const user = User.findOne({ email });
-    if (!user) {
+    const user = await User.findOne({ email });
+    console.log(user);
+    if (user) {
       return res.status(400).json({ message: 'User already exist' });
     }
+
     const hashedPassword = await bcrypt.hash(password, 12);
     const newUser = new User({
       email,
