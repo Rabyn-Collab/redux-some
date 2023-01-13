@@ -10,10 +10,15 @@ const postSchema = Joi.object({
   detail: Joi.string().required().min(10)
 });
 
-router.get('/', check.checkauth, blogController.getAllBlogs);
-router.delete('/api/remove/:id', blogController.removeBlog);
-router.patch('/api/update/:id', blogController.updateBlog);
-router.post('/', check.checkauth, validator.body(postSchema), blogController.addBlog);
+const methodNotAllowed = (req, res) => res.status(405).json({ message: 'method not allowed' });
+
+// router.get('/',);
+router.route('/').get(blogController.getAllBlogs).all(methodNotAllowed);
+
+router.get('/api/getUserPost', check.checkauth, blogController.getUserBlogs);
+router.delete('/api/remove/:id', check.checkauth, blogController.removeBlog);
+router.patch('/api/update/:id', check.checkauth, blogController.updateBlog);
+router.post('/api/addBlog', check.checkauth, validator.body(postSchema), blogController.addBlog);
 
 module.exports = router;
 

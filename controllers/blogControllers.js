@@ -8,10 +8,24 @@ module.exports.getAllBlogs = async (req, res) => {
   const userId = req.userId;
   try {
     const response = await Blog.find().sort({ createdAt: -1 });
-    // const response = await User.findOne({ _id: userId }, { 'blogs': 1 }).populate('blogs');
+
     // const response = await Blog.findOne({ _id: '63bb9e5a5d76def120cd3214' });
     return res.status(200).json(response);
   } catch (err) {
+    console.log(err);
+    return res.status(500).json(err);
+  }
+}
+
+
+module.exports.getUserBlogs = async (req, res) => {
+  const userId = req.userId;
+  try {
+    //  const response = await User.findOne({ _id: userId }, { 'blogs': 1 }).populate('blogs', 'title detail');
+    const response = await User.findOne({ _id: userId }, { 'blogs': 1 }).populate('blogs');
+    return res.status(200).json(response);
+  } catch (err) {
+    console.log(err);
     return res.status(500).json(err);
   }
 }
@@ -138,7 +152,7 @@ module.exports.removeBlog = async (req, res) => {
       });
       await cloudinary.uploader.destroy(imageId);
       const blog = await Blog.findOne({ _id: id });
-      const user = await User.findOne({ _id: userId });
+      const user = await User.findOne({ _id: userId })
       user.blogs.pull(blog);
       await user.save();
       await Blog.findByIdAndDelete({ _id: id });
