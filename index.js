@@ -12,7 +12,7 @@ mongoose.set("strictQuery", false);
 
 mongoose.connect(
   'mongodb+srv://Rabyn900:moles900@cluster0.sgaqpfh.mongodb.net/Blogs?retryWrites=true&w=majority', { useNewUrlParser: true, useUnifiedTopology: true }).then((result) => {
-    app.listen(3000);
+    app.listen(5000);
   });
 
 

@@ -3,6 +3,7 @@ const User = require('../models/User');
 const path = require('path');
 const cloudinary = require('cloudinary').v2;
 const fs = require('fs');
+const { isValidObjectId } = require('mongoose');
 
 module.exports.getAllBlogs = async (req, res) => {
   const userId = req.userId;
@@ -13,6 +14,26 @@ module.exports.getAllBlogs = async (req, res) => {
     return res.status(200).json(response);
   } catch (err) {
     console.log(err);
+    return res.status(500).json(err);
+  }
+}
+
+module.exports.getBlogById = async (req, res) => {
+  const userId = req.params.id;
+  try {
+    if (isValidObjectId(userId)) {
+      const response = await Blog.findOne({ _id: userId });
+      if (!response) {
+        return res.status(200).json({});
+      }
+      return res.status(200).json(response);
+    } else {
+      return res.status(422).json({ status: 'invalid id' });
+    }
+
+
+  } catch (err) {
+
     return res.status(500).json(err);
   }
 }
@@ -45,7 +66,7 @@ module.exports.addBlog = async (req, res) => {
   const filesList = ['.png', '.jpg', '.jpeg'];
 
   if (!filesList.includes(extensionName)) {
-    res.status(422).json({ status: 'invalid image' });
+    return res.status(422).json({ status: 'invalid image' });
   }
 
   file.mv(`./tmp/${file.name}`, (err) => {
@@ -77,7 +98,7 @@ module.exports.addBlog = async (req, res) => {
 
     return res.status(201).json(newBlog);
   } catch (err) {
-    res.status(500).json(err);
+    return res.status(500).json(err);
   }
 
 
